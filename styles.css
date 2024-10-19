@@ -1,0 +1,22 @@
+Container {
+    align: center middle;
+    height: 100%;
+}
+
+Static {
+    height: auto;
+    overflow: auto;
+}
+
+PromptInput {
+    dock: bottom;
+    height: 5;
+    border: none;
+    background: green;
+}
+
+Prompt {
+    dock: bottom;
+    height: 10;
+    background: blue;
+}
