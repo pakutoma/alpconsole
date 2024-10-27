@@ -8,31 +8,34 @@ from textual.widget import Widget
 from textual.widgets import Header, Footer, Input, Static, Log
 
 
-class PromptInput(Input):
+class Prompt(Input):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-    def on_key(self, event: events.Key) -> None:
-        if event.key == "enter":
-            self.action_submit()
-
-
-class Prompt(Widget):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        self.history = []
+        self.history_index = -1
 
     class Executed(Message):
         def __init__(self, command: str):
             self.command = command
             super().__init__()
 
-    def compose(self) -> ComposeResult:
-        yield Log()
-        yield PromptInput()
-
-    def on_input_submitted(self, event: Input.Submitted) -> None:
-        self.post_message(self.Executed(event.value))
-
+    def on_key(self, event: events.Key) -> None:
+        if event.key == "enter":
+            self.history.append(self.value)
+            self.history_index = len(self.history)
+            self.post_message(self.Executed(self.value))
+            self.value = ""
+        elif event.key == "up":
+            if self.history and self.history_index > 0:
+                self.history_index -= 1
+                self.value = self.history[self.history_index]
+        elif event.key == "down":
+            if self.history and self.history_index < len(self.history) - 1:
+                self.history_index += 1
+                self.value = self.history[self.history_index]
+            else:
+                self.history_index = len(self.history)
+                self.value = ""
 
 class AlpRunner(Widget):
     def __init__(self, **kwargs):
@@ -125,10 +128,8 @@ class AlpConsole(App):
     CSS_PATH = "styles.css"
 
     def compose(self) -> ComposeResult:
-        yield Header()
         yield AlpRunner()
         yield Prompt()
-        yield Footer()
 
     def on_prompt_executed(self, event: Prompt.Executed) -> None:
         command = event.command

@@ -5,18 +5,16 @@ Container {
 
 Static {
     height: auto;
+    width: 100%;
     overflow: auto;
-}
-
-PromptInput {
-    dock: bottom;
-    height: 5;
-    border: none;
-    background: green;
 }
 
 Prompt {
     dock: bottom;
-    height: 10;
-    background: blue;
+    height: 1;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: green;
 }
